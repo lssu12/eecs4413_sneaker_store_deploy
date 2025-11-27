@@ -1,0 +1,55 @@
+package edu.yorku.sneaker_store_backend.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * Captures essential details about a store customer for order fulfillment.
+ */
+@Entity
+@Table(name = "customers")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Customer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * Customer's given name.
+     */
+    @Column(nullable = false)
+    private String firstName;
+
+    /**
+     * Customer's surname.
+     */
+    @Column(nullable = false)
+    private String lastName;
+
+    /**
+     * Email address used for communication and login.
+     */
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    private String phoneNumber;
+
+    private String addressLine1;
+
+    private String addressLine2;
+
+    private String city;
+
+    private String province;
+
+    private String postalCode;
+
+    private String country;
+}
