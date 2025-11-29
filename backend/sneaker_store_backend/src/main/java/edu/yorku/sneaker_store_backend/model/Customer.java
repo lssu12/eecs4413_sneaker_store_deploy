@@ -1,5 +1,6 @@
 package edu.yorku.sneaker_store_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +12,12 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "customers")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Customer {
 
     @Id

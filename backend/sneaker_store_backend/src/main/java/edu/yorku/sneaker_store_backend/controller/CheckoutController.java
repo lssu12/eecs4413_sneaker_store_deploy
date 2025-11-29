@@ -55,6 +55,8 @@ public class CheckoutController {
 
     private CheckoutResponseDto errorResponse(String message) {
         return CheckoutResponseDto.builder()
+                .orderId(null)
+                .orderNumber(null)
                 .status("ERROR")
                 .message(message)
                 .build();

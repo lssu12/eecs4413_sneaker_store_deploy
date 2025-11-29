@@ -91,6 +91,7 @@ public class CheckoutService {
         Order savedOrder = orderRepository.save(order);
 
         return CheckoutResponseDto.builder()
+                .orderId(savedOrder.getId())
                 .orderNumber(savedOrder.getOrderNumber())
                 .status(savedOrder.getStatus().name())
                 .totalAmount(savedOrder.getTotalAmount())

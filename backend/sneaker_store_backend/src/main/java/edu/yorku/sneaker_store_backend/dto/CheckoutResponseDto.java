@@ -17,6 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CheckoutResponseDto {
 
+    private Long orderId;
+
     private String orderNumber;
 
     private BigDecimal totalAmount;
