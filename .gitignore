@@ -19,6 +19,30 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# virtual machine crash logs
 hs_err_pid*
 replay_pid*
+
+# Build directories
+build/
+bin/
+target/
+out/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Gradle
+.gradle/
+
+# Spring Boot
+application-local.properties
+
+# Node modules (for frontend)
+node_modules/
+dist/
