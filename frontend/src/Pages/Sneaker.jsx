@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import SneakerService from '../Service/SneakerService';
-import Item from '../Components/Item';
+import Item from '../Components/Item/Item';
 
 const SneakerCategory = () => {
   const [products, setProducts] = useState([]);

@@ -1,96 +1,71 @@
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { BASE_URL } from '../Util/util';
+import { useLocation } from 'react-router-dom';
 
 const OrderSummary = () => {
-  const { orderId } = useParams();
-  const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
+	const { state } = useLocation();
+	const { order } = state || {};
 
+	// Shared Tailwind classes
+	const containerClass = "p-6 max-w-3xl mx-auto bg-gray-50 min-h-screen";
+	const titleClass = "text-2xl font-bold text-center mb-6";
+	const infoBlockClass = "mb-4 space-y-1";
+	const tableClass = "w-full border border-gray-300 border-collapse";
+	const theadClass = "bg-black text-white";
+	const rowHoverClass = "hover:bg-gray-100";
+	const thBaseClass = "border px-4 py-2";
+	const tdBaseClass = "border px-4 py-2";
+	const textCenter = "text-center";
+	const textRight = "text-right";
+	const totalCellClass = "border px-4 py-2 text-right font-bold";
 
-  const container = "p-6 max-w-3xl mx-auto bg-gray-50 min-h-screen";
-  const title = "text-2xl font-bold text-center mb-6";
-  const infoBlock = "mb-4 space-y-1";
-  const table = "w-full border border-gray-300 border-collapse";
-  const thead = "bg-black text-white";
-  const rowHover = "hover:bg-gray-100";
-  const th = "border px-4 py-2";
-  const td = "border px-4 py-2";
-  const textCenter = "text-center";
-  const textRight = "text-right";
-  const totalCell = "border px-4 py-2 text-right font-bold";
+	if (!order) return <p className="text-center mt-6">No order found.</p>;
 
-  useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get(`${BASE_URL}/api/orders/${orderId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setOrder(res.data);
-      } catch (err) {
-        console.error('Error fetching order:', err);
-        setOrder(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrder();
-  }, [orderId]);
+	return (
+		<div className={containerClass}>
+			<h2 className={titleClass}>Order Summary</h2>
 
-  if (loading) {
-    return <p className="text-center mt-6">Loading order...</p>;
-  }
-  if (!order) {
-    return <p className="text-center mt-6">No order found.</p>;
-  }
+			<div className={infoBlockClass}>
+				<p><strong>Order #:</strong> {order.orderNumber}</p>
+				<p><strong>Status:</strong> {order.status}</p>
+			</div>
 
-  const items = Array.isArray(order.items) ? order.items : [];
+			<table className={tableClass}>
+				<thead className={theadClass}>
+					<tr>
+						<th className={`${thBaseClass} text-left`}>Product</th>
+						<th className={`${thBaseClass} ${textCenter}`}>Size</th>
+						<th className={`${thBaseClass} ${textCenter}`}>Quantity</th>
+						<th className={`${thBaseClass} ${textRight}`}>Unit Price</th>
+						<th className={`${thBaseClass} ${textRight}`}>Subtotal</th>
+					</tr>
+				</thead>
 
-  return (
-    <div className={container}>
-      <h2 className={title}>Order Summary</h2>
+				<tbody>
+					{order.items.map((item, index) => (
+						<tr key={item.product?.id || item.productId || index} className={rowHoverClass}>
+							<td className={tdBaseClass}>
+								{item.product?.name || `Product ID: ${item.productId}`}
+							</td>
+							<td className={`${tdBaseClass} ${textCenter}`}>{item.size || '-'}</td>
+							<td className={`${tdBaseClass} ${textCenter}`}>{item.quantity}</td>
+							<td className={`${tdBaseClass} ${textRight}`}>
+								${item.unitPrice?.toFixed(2) || '0.00'}
+							</td>
+							<td className={`${tdBaseClass} ${textRight}`}>
+								${((item.unitPrice || 0) * item.quantity).toFixed(2)}
+							</td>
+						</tr>
+					))}
+				</tbody>
 
-      <div className={infoBlock}>
-        <p><strong>Order #:</strong> {order.orderNumber}</p>
-        <p><strong>Status:</strong> {order.status}</p>
-      </div>
-
-      <table className={table}>
-        <thead className={thead}>
-          <tr>
-            <th className={`${th} text-left`}>Product</th>
-            <th className={`${th} ${textCenter}`}>Size</th>
-            <th className={`${th} ${textCenter}`}>Quantity</th>
-            <th className={`${th} ${textRight}`}>Unit Price</th>
-            <th className={`${th} ${textRight}`}>Subtotal</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {items.map((item, idx) => (
-            <tr key={item.product?.id || item.productId || idx} className={rowHover}>
-              <td className={td}>{item.product?.name || `Product ID: ${item.productId}`}</td>
-              <td className={`${td} ${textCenter}`}>{item.size || '-'}</td>
-              <td className={`${td} ${textCenter}`}>{item.quantity || 0}</td>
-              <td className={`${td} ${textRight}`}>${item.unitPrice?.toFixed(2) || '0.00'}</td>
-              <td className={`${td} ${textRight}`}>
-                ${((item.unitPrice || 0) * (item.quantity || 0)).toFixed(2)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-
-        <tfoot>
-          <tr>
-            <td colSpan="4" className={totalCell}>Total</td>
-            <td className={totalCell}>${order.totalAmount?.toFixed(2) || '0.00'}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  );
+				<tfoot>
+					<tr>
+						<td colSpan="4" className={totalCellClass}>Total</td>
+						<td className={totalCellClass}>${order.totalAmount.toFixed(2)}</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	);
 };
 
 export default OrderSummary;

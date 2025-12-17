@@ -10,8 +10,11 @@ const Item = (props) => {
 					alt={props.name}
 					className="w-full h-auto object-cover"
 				/>
-				<p className="my-1.5 text-center text-base text-black">{props.name}	</p>
 			</Link>
+
+			<p className="my-1.5 text-center text-base text-black">
+				{props.name}
+			</p>
 
 			<div className="flex gap-2 text-lg font-semibold text-black">
 				{props.price}

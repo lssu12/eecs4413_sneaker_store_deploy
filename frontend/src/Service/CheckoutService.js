@@ -6,7 +6,7 @@ const CheckoutService = {
     try {
       const res = await axios.get(`${BASE_URL}/api/orders`, {
         headers: getHeader(token),
-        params: { customerId }, 
+        params: { customerId }, // query param matches your Spring backend
       });
       return res.data;
     } catch (err) {

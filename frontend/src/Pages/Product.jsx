@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { SneakerContext } from "../Context/SneakerContext";
 import { useParams } from "react-router-dom";
 import Breadcrums from "../Components/Breadcrum";
-import ProductDisplay from "../Components/ProductDisplay";
+import ProductDisplay from "../Components/ProductDisplay/ProductDisplay";
 
 const Product = () => {
   const { all_product } = useContext(SneakerContext);

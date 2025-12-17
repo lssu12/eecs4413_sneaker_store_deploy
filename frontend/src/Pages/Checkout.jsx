@@ -77,7 +77,7 @@ const Checkout = () => {
 
 			setCheckoutCompleted(true);
 			alert(`Order ${response.orderNumber} successfully added!`);
-
+			navigate(`/order-summary/${response.orderId}`, { state: { order: response } });
 
 			setTimeout(() => {
 				clearCart();
@@ -88,12 +88,12 @@ const Checkout = () => {
 		}
 	};
 
-
-	const container = 'max-w-xl mx-auto p-6 bg-white rounded shadow-md mt-12'; 
+	// Tailwind class variables
+	const container = "p-6 bg-gray-50 min-h-screen";
 	const title = "text-2xl font-bold text-center mb-6";
 	const section = "mb-6";
 	const sectionTitle = "text-lg font-semibold mb-2";
-	const inputClass = 'border p-2 w-full max-w-md mx-auto rounded block';
+	const inputClass = "border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400";
 	const grid2 = "grid grid-cols-1 md:grid-cols-2 gap-4";
 	const grid3 = "grid grid-cols-1 md:grid-cols-3 gap-4";
 	const alertError = "text-red-600 mb-4";
