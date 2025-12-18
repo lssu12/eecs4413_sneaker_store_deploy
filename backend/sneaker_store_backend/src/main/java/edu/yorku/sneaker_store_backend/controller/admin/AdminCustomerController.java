@@ -2,11 +2,13 @@ package edu.yorku.sneaker_store_backend.controller.admin;
 
 import edu.yorku.sneaker_store_backend.model.Customer;
 import edu.yorku.sneaker_store_backend.service.CustomerAdminService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Admin endpoints for reviewing and updating customer profiles.
@@ -61,11 +63,17 @@ public class AdminCustomerController {
      * DELETE /api/admin/customers/{id}
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean deleted = customerAdminService.delete(id);
-        if (!deleted) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            boolean deleted = customerAdminService.delete(id);
+            if (!deleted) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.noContent().build();
+        } catch (DataIntegrityViolationException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                    "message", "Customer has active orders and cannot be deleted."
+            ));
         }
-        return ResponseEntity.noContent().build();
     }
 }

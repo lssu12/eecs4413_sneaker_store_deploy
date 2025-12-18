@@ -3,6 +3,7 @@ package edu.yorku.sneaker_store_backend.service;
 import edu.yorku.sneaker_store_backend.model.Customer;
 import edu.yorku.sneaker_store_backend.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class CustomerAdminService {
         return customerRepository.save(existing);
     }
 
+    @Transactional
     public boolean delete(Long id) {
         if (!customerRepository.existsById(id)) {
             return false;

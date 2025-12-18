@@ -60,13 +60,19 @@ const AdminCustomer = () => {
 	};
 
 	const handleDelete = async (customerId) => {
-		if (window.confirm('Are you sure you want to delete this customer?')) {
-			try {
-				await CustomerService.deleteCustomer(customerId);
-				fetchCustomers();
-				alert('Customer successfully deleted');
-			} catch (err) {
+		if (!window.confirm('Are you sure you want to delete this customer?')) {
+			return;
+		}
+		try {
+			await CustomerService.deleteCustomer(customerId);
+			fetchCustomers();
+			alert('Customer successfully deleted');
+		} catch (err) {
+			if (err?.response?.status === 409) {
+				alert("You can't delete the customer who has an active order.");
+			} else {
 				console.error('Failed to delete customer', err);
+				alert('Failed to delete customer. Please try again.');
 			}
 		}
 	};
