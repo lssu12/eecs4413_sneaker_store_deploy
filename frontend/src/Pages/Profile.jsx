@@ -18,11 +18,13 @@ const Profile = () => {
     postalCode: '',
     country: ''
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   // Tailwind reusable classes
-  const inputClass = 'border p-2 w-full rounded';
-  const labelClass = 'block mb-1 font-medium';
-  const buttonClass = 'bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition';
+  const inputClass = 'border border-brand-muted focus:border-brand-accent focus:ring-brand-accent focus:ring-1 p-2 w-full rounded-md bg-white';
+  const labelClass = 'block mb-1 font-medium text-brand-secondary';
+  const buttonClass = 'bg-brand-primary text-white px-4 py-2 rounded-full hover:bg-brand-secondary transition';
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
@@ -31,19 +33,31 @@ const Profile = () => {
       return;
     }
 
-    setForm({
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      email: user.email || '',
-      phoneNumber: user.phoneNumber || '',
-      currentPassword: '',
-      addressLine1: user.addressLine1 || '',
-      addressLine2: user.addressLine2 || '',
-      city: user.city || '',
-      province: user.province || '',
-      postalCode: user.postalCode || '',
-      country: user.country || ''
-    });
+    const fetchProfile = async () => {
+      try {
+        const profile = await AuthService.getProfile(user.id);
+        setForm({
+          firstName: profile.firstName || '',
+          lastName: profile.lastName || '',
+          email: profile.email || '',
+          phoneNumber: profile.phoneNumber || '',
+          currentPassword: '',
+          addressLine1: profile.addressLine1 || '',
+          addressLine2: profile.addressLine2 || '',
+          city: profile.city || '',
+          province: profile.province || '',
+          postalCode: profile.postalCode || '',
+          country: profile.country || ''
+        });
+      } catch (err) {
+        console.error('Failed to load profile', err);
+        setError('Unable to load your profile.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
   }, [navigate]);
 
   const handleChange = (e) => {
@@ -67,11 +81,27 @@ const Profile = () => {
     }
   };
 
-  return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-6">My Profile</h1>
+  if (loading) {
+    return <div className="max-w-3xl mx-auto px-4 py-10 text-brand-primary">Loading profile...</div>;
+  }
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-10 text-brand-primary">
+      <div className="bg-white border border-brand-muted rounded-3xl shadow-sm p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h1 className="text-3xl font-display font-semibold">My Profile</h1>
+          <button
+            type="button"
+            onClick={() => navigate('/change-password')}
+            className="px-4 py-2 text-sm font-medium text-white bg-brand-accent rounded-full hover:bg-brand-accent-dark transition"
+          >
+            Change Password
+          </button>
+        </div>
+
+        {error && <div className="mb-4 text-red-600">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className={labelClass}>First Name</label>
           <input name="firstName" value={form.firstName} onChange={handleChange} className={inputClass} />
@@ -129,6 +159,7 @@ const Profile = () => {
         
         <button type="submit" className={buttonClass}>Save Changes</button>
       </form>
+      </div>
     </div>
   );
 };

@@ -2,8 +2,11 @@
 import axios from 'axios';
 import { BASE_URL, getHeader } from '../Util/util';
 
-const getAllSneakers = async () => {
-  const response = await axios.get(`${BASE_URL}/api/sneakers`, { headers: getHeader() });
+const fetchSneakers = async (params = {}) => {
+  const response = await axios.get(`${BASE_URL}/api/sneakers`, {
+    headers: getHeader(),
+    params,
+  });
   return response.data;
 };
 
@@ -12,18 +15,9 @@ const getSneakerById = async (id) => {
   return response.data;
 };
 
-const searchSneakers = async (keyword) => {
-  const response = await axios.get(`${BASE_URL}/api/sneakers/search`, {
-    headers: getHeader(),
-    params: { q: keyword }
-  });
-  return response.data;
-};
+const searchSneakers = async (keyword) => fetchSneakers({ q: keyword });
 
-const getSneakersByBrand = async (brand) => {
-  const response = await axios.get(`${BASE_URL}/api/sneakers/brand/${brand}`, { headers: getHeader() });
-  return response.data;
-};
+const getSneakersByBrand = async (brand) => fetchSneakers({ brand });
 
 const createSneaker = async (sneakerData) => {
   const response = await axios.post(`${BASE_URL}/api/sneakers`, sneakerData, { headers: getHeader() });
@@ -41,7 +35,7 @@ const deleteSneaker = async (id) => {
 };
 
 export default {
-  getAllSneakers,
+  fetchSneakers,
   getSneakerById,
   searchSneakers,
   getSneakersByBrand,

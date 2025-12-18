@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './Components/Navbar';
+import './App.css';
 
 import Home from './Pages/Home';
 import Sneaker from './Pages/Sneaker';
@@ -9,10 +10,12 @@ import LoginSignup from './Pages/LoginSignup';
 import Register from './Pages/Register';
 import Checkout from './Pages/Checkout';
 import OrderSummary from './Pages/OrderSummary';
+import OrderSuccess from './Pages/OrderSuccess';
 
 // Customer pages
 import Profile from './Pages/Profile';
 import Orders from './Pages/Orders';
+import ChangePassword from './Pages/ChangePassword';
 
 // Admin pages
 import AdminPage from './Pages/AdminPage';
@@ -46,6 +49,7 @@ function App() {
               <Route path="/sneakers/:productId" element={<Product />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/order-success" element={<OrderSuccess />} />
 
               {/* ---------- Private Customer Routes ---------- */}
               <Route
@@ -71,6 +75,15 @@ function App() {
                 element={
                   <PrivateRoute>
                     <OrderSummary />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/change-password"
+                element={
+                  <PrivateRoute>
+                    <ChangePassword />
                   </PrivateRoute>
                 }
               />

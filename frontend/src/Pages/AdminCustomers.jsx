@@ -24,10 +24,11 @@ const AdminCustomer = () => {
 	const [formData, setFormData] = useState(emptyVar);
 
 	// Tailwind class variables
-	const tableCellClass = "border px-4 py-2";
-	const inputClass = "w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400";
-	const disabledInputClass = "w-full border px-3 py-2 rounded bg-gray-200 cursor-not-allowed";
-	const buttonBaseClass = "text-white px-4 py-2 rounded hover:opacity-90 transition";
+	const tableCellClass = "border border-brand-muted/70 px-4 py-2 text-sm";
+	const inputClass = "w-full border border-brand-muted px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent";
+	const disabledInputClass = "w-full border border-brand-muted px-3 py-2 rounded-md bg-brand-muted/40 cursor-not-allowed";
+	const buttonBaseClass = "text-white px-4 py-2 rounded-full hover:opacity-90 transition";
+	const labelClass = "block mb-1 font-medium text-brand-secondary";
 
 	// Fetch all customers
 	const fetchCustomers = async () => {
@@ -70,6 +71,19 @@ const AdminCustomer = () => {
 		}
 	};
 
+	const handleViewOrders = (customer) => {
+		navigate(`/admin/orders?customerId=${customer.id}`, {
+			state: {
+				customerContext: {
+					id: customer.id,
+					firstName: customer.firstName,
+					lastName: customer.lastName,
+					email: customer.email,
+				},
+			},
+		});
+	};
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
@@ -83,22 +97,22 @@ const AdminCustomer = () => {
 	};
 
 	return (
-		<div className="p-6">
-		<div className="relative mb-4">
-			<button
-				onClick={() => navigate('/admin')}
-				className={`bg-blue-500 ${buttonBaseClass} hover:bg-blue-800 absolute left-0`}
-			>
-				Back to Admin Page
-			</button>
-			<h2 className="text-2xl font-bold text-black text-center">
-				Customer List
-			</h2>
-		</div>
+		<div className="p-6 bg-brand-surface min-h-screen text-brand-primary">
+	<div className="relative mb-4">
+		<button
+			onClick={() => navigate('/admin')}
+			className={`bg-brand-primary ${buttonBaseClass} hover:bg-brand-secondary absolute left-0`}
+		>
+			Back to Admin Page
+		</button>
+		<h2 className="text-2xl font-display font-semibold text-center">
+			Customer List
+		</h2>
+	</div>
 
 
-			<table className="min-w-full border border-gray-300">
-				<thead className="bg-black text-white">
+			<table className="min-w-full border border-brand-muted bg-white shadow-sm">
+				<thead className="bg-brand-primary text-white">
 					<tr>
 						<th className={tableCellClass}>ID</th>
 						<th className={tableCellClass}>First Name</th>
@@ -113,8 +127,8 @@ const AdminCustomer = () => {
 				</thead>
 				<tbody>
 					{customers.length > 0 ? (
-						customers.map((c) => (
-							<tr key={c.id} className="hover:bg-gray-50">
+							customers.map((c) => (
+								<tr key={c.id} className="hover:bg-brand-surface">
 								<td className={tableCellClass}>{c.id}</td>
 								<td className={tableCellClass}>{c.firstName}</td>
 								<td className={tableCellClass}>{c.lastName}</td>
@@ -123,27 +137,25 @@ const AdminCustomer = () => {
 								<td className={tableCellClass}>{c.city}</td>
 								<td className={tableCellClass}>{c.province}</td>
 								<td className={tableCellClass}>{c.country}</td>
-								<td className={`${tableCellClass} space-x-2`}>
-									<button
-										onClick={() =>
-											navigate(`/admin/orders?customerId=${c.id}`)
-										}
-										className={`bg-blue-500 ${buttonBaseClass} hover:bg-blue-800`}
-									>
-										View Orders
-									</button>
-									<button
-										onClick={() => handleEdit(c.id)}
-										className={`bg-red-500 ${buttonBaseClass} hover:bg-red-800`}
-									>
-										Edit
-									</button>
-									<button
-										onClick={() => handleDelete(c.id)}
-										className={`bg-red-500 ${buttonBaseClass} hover:bg-red-800`}
-									>
-										Delete
-									</button>
+									<td className={`${tableCellClass} space-x-2`}>
+										<button
+											onClick={() => handleViewOrders(c)}
+											className={`bg-brand-secondary ${buttonBaseClass} hover:bg-brand-primary`}
+										>
+											View Orders
+										</button>
+										<button
+											onClick={() => handleEdit(c.id)}
+											className={`bg-brand-accent ${buttonBaseClass} hover:bg-brand-accent-dark`}
+										>
+											Edit
+										</button>
+										<button
+											onClick={() => handleDelete(c.id)}
+											className={`bg-brand-accent ${buttonBaseClass} hover:bg-brand-accent-dark`}
+										>
+											Delete
+										</button>
 								</td>
 							</tr>
 						))
@@ -158,16 +170,16 @@ const AdminCustomer = () => {
 			</table>
 
 			{/* Edit Customer Form */}
-			{formVisible && (
-				<form
-					onSubmit={handleSubmit}
-					className="mt-6 space-y-4 p-4 border border-gray-300 rounded bg-gray-50"
-				>
-					<h3 className="text-xl font-semibold mb-2">Edit Customer</h3>
+				{formVisible && (
+					<form
+						onSubmit={handleSubmit}
+						className="mt-6 space-y-4 p-6 border border-brand-muted rounded-3xl bg-white shadow-sm"
+					>
+						<h3 className="text-xl font-semibold mb-2 text-brand-primary">Edit Customer</h3>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
-							<label className="block mb-1 font-medium">First Name</label>
+							<label className={labelClass}>First Name</label>
 							<input
 								type="text"
 								name="firstName"
@@ -178,7 +190,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">Last Name</label>
+							<label className={labelClass}>Last Name</label>
 							<input
 								type="text"
 								name="lastName"
@@ -189,7 +201,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">Email</label>
+							<label className={labelClass}>Email</label>
 							<input
 								type="email"
 								name="email"
@@ -201,7 +213,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">Phone Number</label>
+							<label className={labelClass}>Phone Number</label>
 							<input
 								type="text"
 								name="phoneNumber"
@@ -211,7 +223,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">Address Line 1</label>
+							<label className={labelClass}>Address Line 1</label>
 							<input
 								type="text"
 								name="addressLine1"
@@ -221,7 +233,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">Address Line 2</label>
+							<label className={labelClass}>Address Line 2</label>
 							<input
 								type="text"
 								name="addressLine2"
@@ -231,7 +243,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">City</label>
+							<label className={labelClass}>City</label>
 							<input
 								type="text"
 								name="city"
@@ -241,7 +253,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">Province</label>
+							<label className={labelClass}>Province</label>
 							<input
 								type="text"
 								name="province"
@@ -251,7 +263,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">Postal Code</label>
+							<label className={labelClass}>Postal Code</label>
 							<input
 								type="text"
 								name="postalCode"
@@ -261,7 +273,7 @@ const AdminCustomer = () => {
 							/>
 						</div>
 						<div>
-							<label className="block mb-1 font-medium">Country</label>
+							<label className={labelClass}>Country</label>
 							<input
 								type="text"
 								name="country"
@@ -272,17 +284,17 @@ const AdminCustomer = () => {
 						</div>
 					</div>
 
-					<div className="flex space-x-2 mt-4">
+					<div className="flex space-x-3 mt-4">
 						<button
 							type="submit"
-							className={`bg-red-500 ${buttonBaseClass} hover:bg-red-800`}
+							className={`bg-brand-primary ${buttonBaseClass} hover:bg-brand-secondary`}
 						>
 							Update
 						</button>
 						<button
 							type="button"
 							onClick={() => setFormVisible(false)}
-							className={`bg-gray-500 ${buttonBaseClass} hover:bg-gray-800`}
+							className="bg-brand-muted text-brand-primary px-4 py-2 rounded-full hover:bg-brand-accent/70 transition"
 						>
 							Cancel
 						</button>

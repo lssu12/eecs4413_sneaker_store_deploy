@@ -9,17 +9,17 @@ const OrderSummary = () => {
   const [loading, setLoading] = useState(true);
 
 
-  const container = "p-6 max-w-3xl mx-auto bg-gray-50 min-h-screen";
-  const title = "text-2xl font-bold text-center mb-6";
-  const infoBlock = "mb-4 space-y-1";
-  const table = "w-full border border-gray-300 border-collapse";
-  const thead = "bg-black text-white";
-  const rowHover = "hover:bg-gray-100";
-  const th = "border px-4 py-2";
-  const td = "border px-4 py-2";
-  const textCenter = "text-center";
-  const textRight = "text-right";
-  const totalCell = "border px-4 py-2 text-right font-bold";
+	const container = "p-8 max-w-3xl mx-auto bg-white border border-brand-muted rounded-3xl shadow-sm mt-10 text-brand-primary";
+	const title = "text-3xl font-display font-semibold text-center mb-6";
+	const infoBlock = "mb-4 space-y-1";
+	const table = "w-full border border-brand-muted border-collapse";
+	const thead = "bg-brand-primary text-white";
+	const rowHover = "hover:bg-brand-surface";
+	const th = "border border-brand-muted/70 px-4 py-2";
+	const td = "border border-brand-muted/70 px-4 py-2";
+	const textCenter = "text-center";
+	const textRight = "text-right";
+	const totalCell = "border border-brand-muted/70 px-4 py-2 text-right font-bold";
 
   useEffect(() => {
     const fetchOrder = async () => {

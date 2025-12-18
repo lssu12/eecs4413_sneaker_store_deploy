@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AuthService from '../Service/AuthService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Register = () => {
 	const [formData, setFormData] = useState({
@@ -17,6 +17,21 @@ const Register = () => {
 		country: '',
 	});
 	const navigate = useNavigate();
+	const location = useLocation();
+	const [errorMessage, setErrorMessage] = useState('');
+
+	const REQUIRED_FIELDS = {
+		firstName: 'First Name',
+		lastName: 'Last Name',
+		email: 'Email Address',
+		phoneNumber: 'Phone Number',
+		password: 'Password',
+		addressLine1: 'Address Line 1',
+		city: 'City',
+		province: 'Province / State',
+		postalCode: 'Postal / ZIP Code',
+		country: 'Country',
+	};
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,9 +39,34 @@ const Register = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		const missingFields = Object.entries(REQUIRED_FIELDS)
+			.filter(([field]) => !(formData[field] ?? '').toString().trim())
+			.map(([, label]) => label);
+
+		if (missingFields.length > 0) {
+			setErrorMessage(`Please fill in: ${missingFields.join(', ')}`);
+			return;
+		}
+
+		setErrorMessage('');
 		try {
 			const response = await AuthService.registerUser(formData);
 			if (response.success) {
+				const redirectTo = location.state?.from;
+				if (redirectTo) {
+					alert('Registration successful! Logging you in...');
+					try {
+						const loginResponse = await AuthService.loginUser({ email: formData.email, password: formData.password });
+						if (loginResponse.token && loginResponse.customerId) {
+							const role = formData.email === 'demo@sneakerstore.test' ? 'ADMIN' : 'USER';
+							localStorage.setItem('role', role);
+							navigate(redirectTo, { replace: true });
+							return;
+						}
+					} catch (loginErr) {
+						console.error('Auto login failed after registration', loginErr);
+					}
+				}
 				alert('Registration successful!');
 				navigate('/login');
 			} else {
@@ -39,15 +79,15 @@ const Register = () => {
 	};
 
 	// Tailwind class variables
-	const pageContainer = "min-h-screen flex items-center justify-center bg-gray-100";
-	const card = "w-full max-w-xl bg-white p-8 rounded-2xl shadow-lg";
-	const heading = "text-2xl font-bold text-center mb-6 text-gray-900";
+	const pageContainer = "min-h-screen flex items-center justify-center bg-brand-surface text-brand-primary px-4";
+	const card = "w-full max-w-xl bg-white p-8 rounded-3xl border border-brand-muted shadow-sm";
+	const heading = "text-3xl font-display font-semibold text-center mb-6";
 	const formGrid = "grid grid-cols-1 md:grid-cols-2 gap-4";
 	const formGroup = "flex flex-col";
-	const labelClass = "mb-1 text-gray-700 font-medium";
-	const inputClass = "w-full px-4 py-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black";
+	const labelClass = "mb-1 text-brand-secondary font-medium";
+	const inputClass = "w-full px-4 py-2 border border-brand-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent";
 	const fullWidth = "md:col-span-2";
-	const submitButton = "md:col-span-2 mt-2 bg-red-600 text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition";
+	const submitButton = "md:col-span-2 mt-4 bg-brand-primary text-white py-3 rounded-full font-semibold hover:bg-brand-secondary transition";
 
 	return (
 		<div className={pageContainer}>
@@ -55,6 +95,9 @@ const Register = () => {
 				<h1 className={heading}>Register</h1>
 
 				<form onSubmit={handleSubmit} className={formGrid}>
+					{errorMessage && (
+						<p className={`${fullWidth} text-red-600 text-sm`}>{errorMessage}</p>
+					)}
 					<div className={formGroup}>
 						<label className={labelClass}>First Name</label>
 						<input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required className={inputClass} />
@@ -72,7 +115,7 @@ const Register = () => {
 
 					<div className={formGroup}>
 						<label className={labelClass}>Phone Number</label>
-						<input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className={inputClass} />
+						<input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required className={inputClass} />
 					</div>
 
 					<div className={formGroup}>
@@ -82,7 +125,7 @@ const Register = () => {
 
 					<div className={`${formGroup} ${fullWidth}`}>
 						<label className={labelClass}>Address Line 1</label>
-						<input type="text" name="addressLine1" value={formData.addressLine1} onChange={handleChange} className={inputClass} />
+						<input type="text" name="addressLine1" value={formData.addressLine1} onChange={handleChange} required className={inputClass} />
 					</div>
 
 					<div className={`${formGroup} ${fullWidth}`}>
@@ -92,22 +135,22 @@ const Register = () => {
 
 					<div className={formGroup}>
 						<label className={labelClass}>City</label>
-						<input type="text" name="city" value={formData.city} onChange={handleChange} className={inputClass} />
+						<input type="text" name="city" value={formData.city} onChange={handleChange} required className={inputClass} />
 					</div>
 
 					<div className={formGroup}>
 						<label className={labelClass}>Province / State</label>
-						<input type="text" name="province" value={formData.province} onChange={handleChange} className={inputClass} />
+						<input type="text" name="province" value={formData.province} onChange={handleChange} required className={inputClass} />
 					</div>
 
 					<div className={formGroup}>
 						<label className={labelClass}>Postal / ZIP Code</label>
-						<input type="text" name="postalCode" value={formData.postalCode} onChange={handleChange} className={inputClass} />
+						<input type="text" name="postalCode" value={formData.postalCode} onChange={handleChange} required className={inputClass} />
 					</div>
 
 					<div className={formGroup}>
 						<label className={labelClass}>Country</label>
-						<input type="text" name="country" value={formData.country} onChange={handleChange} className={inputClass} />
+						<input type="text" name="country" value={formData.country} onChange={handleChange} required className={inputClass} />
 					</div>
 
 					<button type="submit" className={submitButton}>Register</button>

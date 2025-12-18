@@ -77,6 +77,30 @@ const updateProfile = async (profileData) => {
     return response.data;
 };
 
+const getProfile = async (customerId) => {
+    const response = await axios.get(`${BASE_URL}/api/auth/profile/${customerId}`, {
+        headers: getAuthHeader(),
+    });
+    return response.data;
+};
+
+const changePassword = async (payload) => {
+    const response = await axios.put(
+        `${BASE_URL}/api/auth/password`,
+        payload,
+        { headers: getAuthHeader() }
+    );
+    return response.data;
+};
+
+const getAuthHeader = () => {
+    const token = localStorage.getItem("token");
+    return {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+    };
+};
+
 const isAuthenticated = () => !!localStorage.getItem("token");
 const isAdmin = () => localStorage.getItem("role") === "ADMIN";
 
@@ -87,5 +111,8 @@ export default {
     isAuthenticated, 
     isAdmin, 
     getCurrentUser, 
-    updateProfile 
+    updateProfile,
+    getProfile,
+    getAuthHeader,
+    changePassword,
 };

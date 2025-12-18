@@ -9,12 +9,12 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Shared Tailwind classes
-  const containerClass = "max-w-4xl mx-auto px-4 py-10";
-  const cardClass = "border p-5 rounded-lg shadow-sm bg-white";
-  const titleClass = "text-3xl font-bold mb-6";
-  const infoClass = "mb-2";
-  const linkClass = "inline-block mt-2 text-red-500 hover:underline";
+	// Shared Tailwind classes
+	const containerClass = "max-w-4xl mx-auto px-4 py-10 text-brand-primary";
+	const cardClass = "border border-brand-muted p-5 rounded-3xl shadow-sm bg-white";
+	const titleClass = "text-3xl font-display font-semibold mb-6";
+	const infoClass = "mb-2";
+	const linkClass = "inline-block mt-2 text-brand-accent hover:underline";
 
   useEffect(() => {
     const currentUser = AuthService.getCurrentUser();

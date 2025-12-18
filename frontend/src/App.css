@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap');
+
+:root {
+  --brand-primary: #1f2933;
+  --brand-secondary: #374151;
+  --brand-accent: #b68c5a;
+  --brand-accent-dark: #9c7645;
+  --brand-surface: #f7f4ef;
+  --brand-muted: #e5dfd3;
+  --brand-text: #1a1c1d;
+}
+
+body {
+  margin: 0;
+  background-color: var(--brand-surface);
+  color: var(--brand-text);
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--brand-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--brand-muted);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-accent);
+}

@@ -1,98 +1,214 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import OrderService from '../Service/OrderService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AdminOrder = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
+	const incomingCustomerContext = location.state?.customerContext ?? null;
+
+	const [customerContext, setCustomerContext] = useState(incomingCustomerContext);
+
+	useEffect(() => {
+		if (incomingCustomerContext) {
+			setCustomerContext(incomingCustomerContext);
+		}
+	}, [incomingCustomerContext]);
+
+	const searchDefaults = useMemo(() => {
+		const params = new URLSearchParams(location.search);
+		const getParam = (key) => params.get(key) || '';
+		const queryCustomerId = getParam('customerId');
+		const fallbackCustomerId =
+			queryCustomerId || (incomingCustomerContext?.id ? String(incomingCustomerContext.id) : '');
+		return {
+			status: getParam('status'),
+			customerId: fallbackCustomerId,
+			productId: getParam('productId'),
+			dateFrom: getParam('dateFrom'),
+			dateTo: getParam('dateTo'),
+		};
+	}, [location.search, incomingCustomerContext]);
 
 	const [orders, setOrders] = useState([]);
-	const [customerFilter, setCustomerFilter] = useState('');
-	const [productFilter, setProductFilter] = useState('');
-	const [dateFilter, setDateFilter] = useState('');
+	const [filters, setFilters] = useState({
+		status: '',
+		customerId: '',
+		productId: '',
+		dateFrom: '',
+		dateTo: '',
+		...searchDefaults,
+	});
 
-	const fetchOrders = async () => {
-		try {
-			const data = await OrderService.listOrders();
-			console.log('Fetched orders:', data);
-			setOrders(data);
-		} catch (err) {
-			console.error('Failed to fetch orders', err);
+	useEffect(() => {
+		const fetchOrders = async () => {
+			try {
+				const data = await OrderService.listOrders(buildParams(filters));
+				const filteredByCustomer =
+					filters.customerId
+						? data.filter((order) => String(order.customer?.id) === filters.customerId)
+						: data;
+				setOrders(filteredByCustomer);
+			} catch (err) {
+				console.error('Failed to fetch orders', err);
+			}
+		};
+		fetchOrders();
+	}, [filters]);
+
+	useEffect(() => {
+		setFilters((prev) => {
+			const changed = Object.keys(searchDefaults).some((key) => searchDefaults[key] !== prev[key]);
+			return changed ? { ...prev, ...searchDefaults } : prev;
+		});
+	}, [searchDefaults]);
+
+	useEffect(() => {
+		if (!customerContext) {
+			return;
+		}
+		if (!filters.customerId || String(customerContext.id) !== filters.customerId) {
+			setCustomerContext(null);
+		}
+	}, [filters.customerId, customerContext]);
+
+	const clearCustomerFilter = () => {
+		setCustomerContext(null);
+		setFilters((prev) => ({ ...prev, customerId: '' }));
+		const params = new URLSearchParams(location.search);
+		const hadQuery = params.has('customerId');
+		if (hadQuery) {
+			params.delete('customerId');
+		}
+		if (hadQuery || incomingCustomerContext) {
+			const search = params.toString();
+			navigate(
+				{
+					pathname: location.pathname,
+					search: search ? `?${search}` : '',
+				},
+				{ replace: true, state: null }
+			);
 		}
 	};
 
-	useEffect(() => {
-		fetchOrders();
-	}, []);
-
-	const filteredOrders = orders.filter((order) => {
-		const customerText = `${order.customer?.firstName} ${order.customer?.lastName} ${order.customer?.email}`.toLowerCase();
-		const customerMatch = customerText.includes(customerFilter.toLowerCase());
-
-		const orderDate = new Date(order.orderDate).toISOString().split('T')[0];
-		const dateMatch = dateFilter ? orderDate === dateFilter : true;
-
-		const productMatch = order.items.some((item) => {
-			const productText = `${item.product?.name} ${item.product?.brand}`.toLowerCase();
-			return productText.includes(productFilter.toLowerCase());
-		});
-
-		return customerMatch && productMatch && dateMatch;
-	});
+	const buildParams = (input) => {
+		const params = {};
+		if (input.status) params.status = input.status;
+		if (input.customerId) params.customerId = input.customerId;
+		if (input.productId) params.productId = input.productId;
+		if (input.dateFrom) params.dateFrom = input.dateFrom;
+		if (input.dateTo) params.dateTo = input.dateTo;
+		return params;
+	};
 
 	// Tailwind classes
-	const tableCellClass = "border px-4 py-2";
-	const inputClass = "border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 w-full";
-	const buttonBaseClass = "text-white px-4 py-2 rounded hover:opacity-90 transition";
+	const tableCellClass = "border border-brand-muted/70 px-4 py-2 text-sm";
+	const inputClass = "border border-brand-muted px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent w-full";
+	const buttonBaseClass = "text-white px-4 py-2 rounded-full hover:opacity-90 transition";
+	const labelClass = "block mb-1 font-medium text-brand-secondary";
 
 	return (
-		<div className="p-6">
-			<div className="relative mb-4">
+		<div className="p-6 bg-brand-surface min-h-screen text-brand-primary">
+		<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+			<div className="flex gap-2">
+				<button
+					onClick={() => navigate('/adminCustomers')}
+					className={`bg-brand-secondary ${buttonBaseClass} hover:bg-brand-primary`}
+				>
+					← Customers
+				</button>
 				<button
 					onClick={() => navigate('/Admin')}
-					className={`bg-blue-500 ${buttonBaseClass} hover:bg-blue-800 absolute left-0`}
+					className={`bg-brand-primary ${buttonBaseClass} hover:bg-brand-secondary`}
 				>
-					Back to Admin Page
+					Admin Home
 				</button>
-				<h2 className="text-2xl font-bold text-black text-center">Order List</h2>
 			</div>
+			<h2 className="text-2xl font-display font-semibold text-center flex-1">Order List</h2>
+		</div>
 
-			{/* Filters */}
-			<div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-				<div>
-					<label className="block mb-1 font-medium">Customer Name/Email</label>
-					<input
-						type="text"
-						placeholder="Filter by customer name or email"
-						value={customerFilter}
-						onChange={(e) => setCustomerFilter(e.target.value)}
-						className={inputClass}
-					/>
+		{filters.customerId && (
+			<div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-brand-primary/5 border border-brand-primary/30 rounded-3xl px-4 py-3 text-sm">
+				<div className="text-brand-primary">
+					Viewing orders for customer #{filters.customerId}
+					{customerContext && (
+						<span>
+							{' '}
+							({customerContext.firstName} {customerContext.lastName})
+						</span>
+					)}
 				</div>
-				<div>
-					<label className="block mb-1 font-medium">Product Name/Brand</label>
-					<input
-						type="text"
-						placeholder="Filter by product name or brand"
-						value={productFilter}
-						onChange={(e) => setProductFilter(e.target.value)}
-						className={inputClass}
-					/>
-				</div>
-				<div>
-					<label className="block mb-1 font-medium">Date</label>
-					<input
-						type="date"
-						value={dateFilter}
-						onChange={(e) => setDateFilter(e.target.value)}
-						className={inputClass}
-					/>
-				</div>
+				<button
+					onClick={clearCustomerFilter}
+					className={`bg-brand-secondary ${buttonBaseClass} hover:bg-brand-primary w-full sm:w-auto`}
+				>
+					Clear customer filter
+				</button>
 			</div>
+		)}
+
+		{/* Filters */}
+		<div className="mb-4 grid grid-cols-1 md:grid-cols-5 gap-4">
+			<div>
+				<label className={labelClass}>Status</label>
+				<select
+					value={filters.status}
+					onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}
+					className={inputClass}
+				>
+					<option value="">All</option>
+					<option value="PENDING">Pending</option>
+					<option value="PAID">Paid</option>
+					<option value="SHIPPED">Shipped</option>
+					<option value="DELIVERED">Delivered</option>
+					<option value="CANCELLED">Cancelled</option>
+				</select>
+			</div>
+			<div>
+				<label className={labelClass}>Customer ID</label>
+				<input
+					type="number"
+					value={filters.customerId}
+					onChange={(e) => setFilters((prev) => ({ ...prev, customerId: e.target.value }))}
+					className={inputClass}
+					placeholder="e.g. 5"
+				/>
+			</div>
+			<div>
+				<label className={labelClass}>Product ID</label>
+				<input
+					type="number"
+					value={filters.productId}
+					onChange={(e) => setFilters((prev) => ({ ...prev, productId: e.target.value }))}
+					className={inputClass}
+					placeholder="e.g. 10"
+				/>
+			</div>
+			<div>
+				<label className={labelClass}>Date From</label>
+				<input
+					type="date"
+					value={filters.dateFrom}
+					onChange={(e) => setFilters((prev) => ({ ...prev, dateFrom: e.target.value }))}
+					className={inputClass}
+				/>
+			</div>
+			<div>
+				<label className={labelClass}>Date To</label>
+				<input
+					type="date"
+					value={filters.dateTo}
+					onChange={(e) => setFilters((prev) => ({ ...prev, dateTo: e.target.value }))}
+					className={inputClass}
+				/>
+			</div>
+		</div>
 
 			{/* Orders Table */}
 			<div className="overflow-x-auto">
-				<table className="min-w-full border border-gray-300">
-					<thead className="bg-black text-white">
+				<table className="min-w-full border border-brand-muted bg-white shadow-sm">
+					<thead className="bg-brand-primary text-white">
 						<tr>
 							<th className={tableCellClass}>Order ID</th>
 							<th className={tableCellClass}>Order Number</th>
@@ -112,16 +228,16 @@ const AdminOrder = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{filteredOrders.length === 0 && (
+						{orders.length === 0 && (
 							<tr>
 								<td colSpan={15} className={`${tableCellClass} text-center`}>
 									No orders found
 								</td>
 							</tr>
 						)}
-						{filteredOrders.map((order) =>
+						{orders.map((order) =>
 							order.items.map((item) => (
-								<tr key={`${order.id}-${item.id}`} className="hover:bg-gray-50">
+								<tr key={`${order.id}-${item.id}`} className="hover:bg-brand-surface">
 									<td className={tableCellClass}>{order.id}</td>
 									<td className={tableCellClass}>{order.orderNumber}</td>
 									<td className={tableCellClass}>{order.customer?.id}</td>

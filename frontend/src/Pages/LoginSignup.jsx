@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AuthService from '../Service/AuthService';
+import Toast from '../Components/Toast';
 
 const LoginSignup = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const navigate = useNavigate();
+	const location = useLocation();
+	const [toast, setToast] = useState(null);
+
+	const showToast = (message, type = 'info') => {
+		setToast({ message, type });
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -14,32 +21,34 @@ const LoginSignup = () => {
 			const { token, customerId } = response;
 
 			if (!token || !customerId) {
-				alert('Login failed');
+				showToast('Login failed. Please try again.', 'error');
 				return;
 			}
 
-			alert('Successful login');
+			showToast('Successfully logged in', 'success');
+			const redirectTo = location.state?.from || '/sneakers';
 
 			if (email === 'demo@sneakerstore.test') {
 				localStorage.setItem('role', 'ADMIN');
 				navigate('/admin');
 			} else {
 				localStorage.setItem('role', 'USER');
-				navigate('/sneakers');
+				navigate(redirectTo);
 			}
 		} catch (err) {
 			console.error(err);
-			alert('Login failed. Please check email and password.');
+			showToast('Login failed. Please check email and password.', 'error');
 		}
 	};
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-100">
+		<div className="min-h-screen flex items-center justify-center bg-brand-surface px-4 text-brand-primary">
+			<Toast message={toast?.message} type={toast?.type} onClose={() => setToast(null)} />
 			<form
 				onSubmit={handleSubmit}
-				className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md"
+				className="bg-white p-10 rounded-3xl border border-brand-muted shadow-sm w-full max-w-md"
 			>
-				<h1 className="text-2xl font-bold text-center mb-6">Login</h1>
+				<h1 className="text-3xl font-display font-semibold text-center mb-6">Login</h1>
 
 				<div className="space-y-4">
 					<input
@@ -47,7 +56,7 @@ const LoginSignup = () => {
 						placeholder="Email address"
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
-						className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+						className="w-full px-4 py-2 border border-brand-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent"
 					/>
 
 					<input
@@ -59,17 +68,17 @@ const LoginSignup = () => {
 					/>
 				</div>
 
-				<button
-					type="submit"
-					className="w-full mt-6 bg-red-600 text-white py-2 rounded-lg hover:bg-red-800 transition"
-				>
+					<button
+						type="submit"
+						className="w-full mt-6 bg-brand-primary text-white py-3 rounded-full hover:bg-brand-secondary transition"
+					>
 					Login
 				</button>
 
-				<p className="text-center text-sm mt-4">
-					Not a member?{' '}
-					<span
-						className="text-black font-semibold cursor-pointer hover:underline"
+					<p className="text-center text-sm mt-4">
+						Not a member?{' '}
+						<span
+							className="text-brand-accent font-semibold cursor-pointer hover:underline"
 						onClick={() => navigate('/register')}
 					>
 						Sign Up

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default class ApiServices {
-  static BASE_URL = "http://localhost:5173";
+  static BASE_URL = "http://localhost:8080";
 
   static getHeader() {
     // Try to access the token

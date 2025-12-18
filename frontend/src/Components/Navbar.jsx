@@ -17,11 +17,11 @@ const Navbar = () => {
 
   const linkClass = ({ isActive }) =>
     `px-3 py-2 text-sm font-medium transition ${
-      isActive ? 'text-red-500' : 'text-gray-700 hover:text-red-500'
+      isActive ? 'text-brand-accent' : 'text-brand-secondary hover:text-brand-accent'
     }`;
 
   return (
-    <nav className="w-full bg-white shadow-md">
+    <nav className="w-full bg-brand-surface/90 backdrop-blur border-b border-brand-muted">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
 
@@ -31,7 +31,7 @@ const Navbar = () => {
             className="flex items-center gap-2 cursor-pointer"
           >
             <img src={nav_logo} alt="Logo" className="h-10 w-10 object-cover rounded" />
-            <span className="text-lg font-bold tracking-wide">SNEAKER STORE</span>
+            <span className="text-lg font-bold tracking-wide text-brand-primary font-display">SNEAKER STORE</span>
           </div>
 
 
@@ -46,7 +46,7 @@ const Navbar = () => {
                 <li>
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 transition"
+                    className="px-4 py-2 text-sm font-medium text-white bg-brand-accent rounded hover:bg-brand-accent-dark transition"
                   >Logout
                   </button>
                 </li>
@@ -68,14 +68,17 @@ const Navbar = () => {
                     <li>
                       <button
                         onClick={handleLogout}
-                        className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 transition"
+                        className="px-4 py-2 text-sm font-medium text-white bg-brand-accent rounded hover:bg-brand-accent-dark transition"
                       >Logout
                       </button>
                     </li>
                   </>
                 ) : (
                   // Guest Links
-                  <li><NavLink to="/login" className={linkClass}>Login</NavLink></li>
+                  <>
+                    <li><NavLink to="/cart" className={linkClass}>Cart</NavLink></li>
+                    <li><NavLink to="/login" className={linkClass}>Login</NavLink></li>
+                  </>
                 )}
               </>
             )}

@@ -28,4 +28,11 @@ const deleteProduct = async (productId) => {
 	return response.data;
 }
 
-export default { listProducts, addProduct, updateProduct, deleteProduct}
+const getInventoryHistory = async (productId) => {
+	const response = await axios.get(`${BASE_URL}/api/admin/products/${productId}/inventory-history`, {
+		headers: getHeader(),
+	});
+	return response.data;
+}
+
+export default { listProducts, addProduct, updateProduct, deleteProduct, getInventoryHistory }

@@ -28,18 +28,18 @@ const Cart = () => {
 	// Tailwind class variables
 	const tableCell = "border px-4 py-2";
 	const actionButton = "text-white px-3 py-1 rounded transition";
-	const addButton = `bg-blue-500 hover:bg-blue-700 ${actionButton}`;
-	const removeButton = `bg-red-500 hover:bg-red-700 ${actionButton}`;
+	const addButton = `bg-brand-secondary hover:bg-brand-primary ${actionButton}`;
+	const removeButton = `bg-brand-accent hover:bg-brand-accent-dark ${actionButton}`;
 
-	return (
-		<div className="p-6 bg-gray-50 min-h-screen">
-			<h2 className="text-2xl font-bold text-black mb-4 text-center">
-				Your Cart ({getTotalItems()} items)
-			</h2>
+		return (
+			<div className="p-6 bg-brand-surface min-h-screen text-brand-primary">
+				<h2 className="text-2xl font-display font-semibold mb-4 text-center">
+					Your Cart ({getTotalItems()} items)
+				</h2>
 
 			<div className="overflow-x-auto">
-				<table className="min-w-full border border-gray-300">
-					<thead className="bg-black text-white">
+					<table className="min-w-full border border-brand-muted bg-white shadow-sm">
+						<thead className="bg-brand-primary text-white">
 						<tr>
 							<th className={tableCell}>Name</th>
 							<th className={tableCell}>Size</th>
@@ -79,7 +79,7 @@ const Cart = () => {
 					</tbody>
 
 					<tfoot>
-						<tr className="bg-gray-200 font-semibold">
+							<tr className="bg-brand-muted/60 font-semibold">
 							<td colSpan="4" className={`${tableCell} text-right`}>
 								Total Price:
 							</td>
@@ -92,12 +92,12 @@ const Cart = () => {
 			</div>
 
 			<div className="flex justify-end mt-6">
-				<button
-					onClick={handleCheckout}
-					className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-800 transition"
-				>
-					Checkout
-				</button>
+					<button
+						onClick={handleCheckout}
+						className="bg-brand-primary text-white px-6 py-2 rounded-full hover:bg-brand-secondary transition"
+					>
+						Checkout
+					</button>
 			</div>
 		</div>
 	);

@@ -1,17 +1,29 @@
 import axios from 'axios';
 import { BASE_URL, getHeader } from '../Util/util';
 
-const listOrders = async (status) =>{
+const listOrders = async (filters = {}) => {
 	const params = {};
-	if (status) {
-		params.status = status;
+	if (filters.status) {
+		params.status = filters.status;
+	}
+	if (filters.customerId) {
+		params.customerId = filters.customerId;
+	}
+	if (filters.productId) {
+		params.productId = filters.productId;
+	}
+	if (filters.dateFrom) {
+		params.dateFrom = filters.dateFrom;
+	}
+	if (filters.dateTo) {
+		params.dateTo = filters.dateTo;
 	}
 	const response = await axios.get(`${BASE_URL}/api/admin/orders`, {
 		headers: getHeader(),
-		params: params,
+		params,
 	});
 	return response.data;
-}
+};
 
 const getOrderById = async (orderId) =>{
 	const response = await axios.get(`${BASE_URL}/api/admin/orders/${orderId}`, { headers: getHeader() });
