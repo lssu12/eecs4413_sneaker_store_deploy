@@ -182,6 +182,7 @@ const SneakerCategory = () => {
               name={item.name}
               image={item.imageUrl}
               price={`$${item.price}`}
+              stock={item.stock}
             />
           ))}
         </div>

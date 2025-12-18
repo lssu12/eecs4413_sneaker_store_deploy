@@ -65,7 +65,9 @@ const ProductDisplayPage = () => {
         <p><span className="font-bold mr-2">Description:</span>{product.description}</p>
 
         <h2 className="text-[28px] text-brand-accent my-5">${product.price}</h2>
-        <p><span className="font-bold">In Stock:</span> {product.stock}</p>
+        {!!product.stock && (
+          <p><span className="font-bold">In Stock:</span> {product.stock}</p>
+        )}
 
         {/* Size Selection */}
         <div className="flex flex-col gap-2 mt-7">
