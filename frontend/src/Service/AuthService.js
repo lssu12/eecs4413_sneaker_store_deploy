@@ -1,6 +1,39 @@
 import axios from 'axios';
 import { BASE_URL } from "../Util/util";
 
+const buildUserProfile = (data = {}) => ({
+    id: data.customerId ?? data.id ?? null,
+    firstName: data.firstName || "",
+    lastName: data.lastName || "",
+    email: data.email || "",
+    phoneNumber: data.phoneNumber || "",
+    addressLine1: data.addressLine1 || "",
+    addressLine2: data.addressLine2 || "",
+    city: data.city || "",
+    province: data.province || "",
+    postalCode: data.postalCode || "",
+    country: data.country || "",
+    billingAddressLine1: data.billingAddressLine1 || "",
+    billingAddressLine2: data.billingAddressLine2 || "",
+    billingCity: data.billingCity || "",
+    billingProvince: data.billingProvince || "",
+    billingPostalCode: data.billingPostalCode || "",
+    billingCountry: data.billingCountry || "",
+    creditCardHolder: data.creditCardHolder || "",
+    creditCardNumber: data.creditCardNumber || "",
+    creditCardExpiry: data.creditCardExpiry || "",
+    creditCardCvv: data.creditCardCvv || "",
+});
+
+const persistSession = (data = {}) => {
+    if (!data.token || !data.customerId) {
+        return;
+    }
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("userId", data.customerId);
+    localStorage.setItem("role", data.role || 'CUSTOMER');
+    localStorage.setItem("user", JSON.stringify(buildUserProfile(data)));
+};
 
 const registerUser = async (registration) => {
     const response = await axios.post(`${BASE_URL}/api/auth/register`, registration);
@@ -11,26 +44,7 @@ const loginUser = async (loginDetails) => {
     const response = await axios.post(`${BASE_URL}/api/auth/login`, loginDetails);
     const data = response.data;
 
-    if (data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.customerId); 
-        localStorage.setItem("role", data.role || 'CUSTOMER');
-
-        // Save full user info for Profile page
-        localStorage.setItem("user", JSON.stringify({
-            id: data.customerId,
-            firstName: data.firstName || "",
-            lastName: data.lastName || "",
-            email: data.email || "",
-            phoneNumber: data.phoneNumber || "",
-            addressLine1: data.addressLine1 || "",
-            addressLine2: data.addressLine2 || "",
-            city: data.city || "",
-            province: data.province || "",
-            postalCode: data.postalCode || "",
-            country: data.country || ""
-        }));
-    }
+    persistSession(data);
 
     return data;
 };
@@ -46,6 +60,13 @@ const getCurrentUser = () => {
         console.error("Failed to parse user from localStorage", e);
         return null;
     }
+};
+
+const updateCachedUser = (updates = {}) => {
+    const current = getCurrentUser() || {};
+    const next = { ...current, ...updates };
+    localStorage.setItem("user", JSON.stringify(next));
+    return next;
 };
 
 const logoutUser = () => {
@@ -116,4 +137,6 @@ export default {
     getProfile,
     getAuthHeader,
     changePassword,
+    persistSession,
+    updateCachedUser,
 };

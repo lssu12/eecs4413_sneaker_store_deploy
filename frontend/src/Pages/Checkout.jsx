@@ -44,6 +44,7 @@ const Checkout = () => {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [paymentGuard, setPaymentGuard] = useState(() => loadPaymentGuard());
 	const [blockCountdown, setBlockCountdown] = useState(0);
+	const [savePaymentInfo, setSavePaymentInfo] = useState(true);
 	const paymentAttempts = paymentGuard.attempts || 0;
 	const blockedUntil = paymentGuard.blockedUntil;
 	const attemptsRemaining = Math.max(MAX_PAYMENT_ATTEMPTS - paymentAttempts, 0);
@@ -60,10 +61,28 @@ const Checkout = () => {
 		const currentUser = AuthService.getCurrentUser();
 		if (currentUser?.id) {
 			setUser(currentUser);
-			setBilling(currentUser.billing || { firstName: '', lastName: '', address: '', city: '', zip: '' });
-			setShipping(currentUser.shipping || { firstName: '', lastName: '', address: '', city: '', zip: '' });
+			setBilling({
+				firstName: currentUser.firstName || '',
+				lastName: currentUser.lastName || '',
+				address: currentUser.billingAddressLine1 || currentUser.addressLine1 || '',
+				city: currentUser.billingCity || currentUser.city || '',
+				zip: currentUser.billingPostalCode || currentUser.postalCode || '',
+			});
+			setShipping({
+				firstName: currentUser.firstName || '',
+				lastName: currentUser.lastName || '',
+				address: currentUser.addressLine1 || currentUser.billingAddressLine1 || '',
+				city: currentUser.city || currentUser.billingCity || '',
+				zip: currentUser.postalCode || currentUser.billingPostalCode || '',
+			});
+			setPayment({
+				cardNumber: currentUser.creditCardNumber || '',
+				expiry: currentUser.creditCardExpiry || '',
+				cvc: currentUser.creditCardCvv || '',
+			});
 		} else {
 			setUseSavedInfo(false);
+			setPayment({ cardNumber: '', expiry: '', cvc: '' });
 		}
 	}, [navigate, cartProductList, checkoutCompleted]);
 
@@ -193,14 +212,21 @@ const Checkout = () => {
 					lastName: guestInfo.lastName,
 					email: guestInfo.email,
 					password: guestInfo.password,
+					addressLine1: shipping.address || billing.address,
+					city: shipping.city || '',
+					postalCode: shipping.zip || '',
+					billingAddressLine1: billing.address || '',
+					billingCity: billing.city || '',
+					billingPostalCode: billing.zip || '',
 				});
 				if (!response.success) {
 					showError(response.message || 'Unable to register new account for checkout.');
 					return;
 				}
 				customerId = response.customerId;
-				localStorage.setItem('token', response.token);
-				setUser({ id: response.customerId, email: guestInfo.email });
+				AuthService.persistSession(response);
+				const hydratedUser = AuthService.getCurrentUser();
+				setUser(hydratedUser || { id: response.customerId, email: guestInfo.email });
 			}
 			catch (err) {
 				showError('Unable to register account. Please try again.');
@@ -232,6 +258,7 @@ const Checkout = () => {
 			return;
 		}
 
+		const cardHolderName = `${billing.firstName || user?.firstName || ''} ${billing.lastName || user?.lastName || ''}`.trim();
 		const checkoutData = {
 			customerId,
 			items: cartProductList.map((item) => ({
@@ -244,6 +271,11 @@ const Checkout = () => {
 			useSavedInfo,
 			paymentMethod: payment.cardNumber,
 			paymentToken: 'approve',
+			cardHolder: cardHolderName,
+			cardNumber: payment.cardNumber,
+			cardExpiry: payment.expiry,
+			cardCvv: payment.cvc,
+			savePaymentInfo,
 		};
 
 		try {
@@ -278,6 +310,22 @@ const Checkout = () => {
 			clearCart();
 			if (typeof refreshProducts === 'function') {
 				refreshProducts();
+			}
+			if (savePaymentInfo) {
+				const nextUser = AuthService.updateCachedUser({
+					creditCardHolder: cardHolderName,
+					creditCardNumber: payment.cardNumber,
+					creditCardExpiry: payment.expiry,
+					creditCardCvv: payment.cvc,
+				});
+				if (nextUser) {
+					setUser(nextUser);
+					setPayment({
+						cardNumber: nextUser.creditCardNumber || '',
+						expiry: nextUser.creditCardExpiry || '',
+						cvc: nextUser.creditCardCvv || '',
+					});
+				}
 			}
 			navigate('/order-success', { state: { order: orderDetails } });
 		} catch (err) {
@@ -477,6 +525,15 @@ const Checkout = () => {
 							onChange={(e) => setPayment({ ...payment, cvc: e.target.value })}
 						/>
 					</div>
+				</div>
+				<div className="mt-4 flex items-center gap-2 text-sm text-brand-secondary">
+					<input
+						type="checkbox"
+						checked={savePaymentInfo}
+						onChange={(e) => setSavePaymentInfo(e.target.checked)}
+						className="rounded border-brand-muted"
+					/>
+					<span>Save payment information for future purchases</span>
 				</div>
 			</section>
 

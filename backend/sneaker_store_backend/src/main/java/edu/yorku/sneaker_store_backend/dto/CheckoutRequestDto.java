@@ -29,4 +29,14 @@ public class CheckoutRequestDto {
     private String paymentToken;
 
     private boolean useSavedInfo;
+
+    private String cardHolder;
+
+    private String cardNumber;
+
+    private String cardExpiry;
+
+    private String cardCvv;
+
+    private boolean savePaymentInfo;
 }

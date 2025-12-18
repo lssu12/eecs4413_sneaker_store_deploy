@@ -117,6 +117,7 @@ public class CheckoutService {
                 ));
 
         cartService.clearCart(customer.getId());
+        persistPaymentDetails(customer, request);
 
         return CheckoutResponseDto.builder()
                 .orderId(savedOrder.getId())
@@ -278,6 +279,39 @@ public class CheckoutService {
             sneaker.setStock(newStock);
             sneakerRepository.save(sneaker);
         });
+    }
+
+    private void persistPaymentDetails(Customer customer, CheckoutRequestDto request) {
+        if (customer == null || !request.isSavePaymentInfo()) {
+            return;
+        }
+
+        boolean updated = false;
+
+        if (hasText(request.getCardHolder())
+                && !request.getCardHolder().equals(customer.getCreditCardHolder())) {
+            customer.setCreditCardHolder(request.getCardHolder());
+            updated = true;
+        }
+        if (hasText(request.getCardNumber())
+                && !request.getCardNumber().equals(customer.getCreditCardNumber())) {
+            customer.setCreditCardNumber(request.getCardNumber());
+            updated = true;
+        }
+        if (hasText(request.getCardExpiry())
+                && !request.getCardExpiry().equals(customer.getCreditCardExpiry())) {
+            customer.setCreditCardExpiry(request.getCardExpiry());
+            updated = true;
+        }
+        if (hasText(request.getCardCvv())
+                && !request.getCardCvv().equals(customer.getCreditCardCvv())) {
+            customer.setCreditCardCvv(request.getCardCvv());
+            updated = true;
+        }
+
+        if (updated) {
+            customerRepository.save(customer);
+        }
     }
 
     private record SaleAdjustment(Product product, int previousStock, int newStock, int quantity) {
