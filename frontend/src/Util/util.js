@@ -10,7 +10,7 @@ export const getHeader= (overrideToken) => {
 
 const SNEAKER_IMAGE_MAP = {
 	'air-max-90': '/images/sneakers/1.png',
-	ultraboost: '/images/sneakers/2.png',
+	'ultraboost': '/images/sneakers/2.png',
 	'air-jordan-1': '/images/sneakers/3.png',
 	'air-force-1': '/images/sneakers/4.png',
 	'stan-smith': '/images/sneakers/5.png',

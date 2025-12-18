@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-
+import { BASE_URL } from '../Util/util';
 // Create context
 export const CartContext = createContext(null);
 export const useCart = () => useContext(CartContext);
@@ -13,7 +13,7 @@ const CartContextProvider = ({ children }) => {
 
 	const fetchProducts = useCallback(async () => {
 		try {
-			const res = await fetch('http://localhost:8080/api/sneakers');
+			const res = await fetch(`${BASE_URL}/api/sneakers`);
 			const data = await res.json();
 			const products = data.map((p) => ({ ...p, id: String(p.id), price: parseFloat(p.price) }));
 			setAllProduct(products);

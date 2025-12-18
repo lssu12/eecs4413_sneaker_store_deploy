@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-
+import { BASE_URL } from '../Util/util'; 
 export const SneakerContext = createContext(null);
 
 const SneakerContextProvider = ({ children }) => {
@@ -10,7 +10,7 @@ const SneakerContextProvider = ({ children }) => {
 	useEffect(() => {
 		const fetchSneakers = async () => {
 			try {
-				const res = await fetch('http://localhost:8080/api/sneakers');
+				const res = await fetch(`${BASE_URL}/api/sneakers`);
 
 				if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 				const data = await res.json();
