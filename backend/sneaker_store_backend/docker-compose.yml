@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: sneaker-store-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sneaker_store
+      MYSQL_ROOT_PASSWORD: root_secret
+      MYSQL_USER: sneaker_app
+      MYSQL_PASSWORD: sneaker_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+volumes:
+  mysql-data:
