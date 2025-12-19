@@ -1,7 +1,19 @@
 
-------------------------------------------------------------------------
 
-EECS 4413 Sneaker Store Project
+
+
+# 👟Premium Sneaker Store
+
+![Java](https://img.shields.io/badge/Java-21-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
+![React](https://img.shields.io/badge/React-18-blue)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-lightgrey)
+![Vite](https://img.shields.io/badge/Vite-5.0-purple)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+> **EECS 4413 Project - York University**
+>
+> A full-stack e-commerce platform designed for sneaker enthusiasts. This application features a responsive React frontend, a robust Spring Boot backend, and a MySQL database deployed on the cloud.
 
 Dongling Yu 219511039
 
@@ -11,77 +23,53 @@ Hang Chen 218426106
 
 Li Sha Su 213581772
 
-------------------------------------------------------------------------
+---
 
-1. SOURCE CODE REPOSITORY
-------------------------------------------------------------------------
-The complete source code is hosted on GitHub (Public):
-https://github.com/dyu55/eecs4413_sneaker_store
+## 🚀 Live Demo
 
-2. INSTRUCTIONS TO DOWNLOAD SOURCE CODE
-------------------------------------------------------------------------
-To download the source code, please open a terminal and run:
+- **Frontend (Vercel):** [https://eecs4413-sneaker-store-deploy.vercel.app](https://eecs4413-sneaker-store-deploy.vercel.app)
+- **Database (Railway):** MySQL 8.0
 
-    git clone https://github.com/dyu55/eecs4413_sneaker_store.git
+---
 
-3. SQL SCRIPTS LOCATION
-------------------------------------------------------------------------
-The database initialization scripts (schema and data) are located in the 
-backend resource directory:
+## ✨ Features
 
-- Path in Repository: 
-  /backend/sneaker_store_backend/src/main/resources/
+- **User Authentication:** Secure login and registration system.
+- **Product Catalog:** Browse sneakers with filtering and detailed views.
+- **Shopping Cart:** Add items, adjust quantities, and manage cart state.
+- **Checkout Process:** Simulated order placement workflow.
+- **Admin Dashboard:** Manage inventory and view orders (Requires Admin Role).
+- **Responsive Design:** Optimized for both desktop and mobile devices.
 
-- Files:
-  - schema.sql (Table creation)
-  - data.sql (Initial data seeding)
+---
 
-- Direct GitHub Link:
-  https://github.com/dyu55/eecs4413_sneaker_store/tree/main/backend/sneaker_store_backend/src/main/resources
+## 🛠️ Tech Stack
 
-4. ONLINE DEPLOYMENT (CLOUD URL)
-------------------------------------------------------------------------
-The application is deployed on the cloud (Frontend on Vercel, Backend on Render, Database on Railway).
+### Frontend
+- **Framework:** React.js (Vite)
+- **Styling:** CSS Modules / Tailwind (Standard CSS)
+- **State Management:** React Context API / Hooks
+- **HTTP Client:** Axios / Fetch API
 
-- Access the Application here:
-  https://eecs4413-sneaker-store-deploy.vercel.app
+### Backend
+- **Framework:** Spring Boot 3
+- **Language:** Java 21
+- **Database:** MySQL
+- **ORM:** Spring Data JPA / Hibernate
+- **Build Tool:** Gradle
 
-5. ADMIN CREDENTIALS
-------------------------------------------------------------------------
-To access the Admin Dashboard:
+---
 
-- Username/Email: demo@sneakerstore.test
-- Password: password
-  
-6. LOCALHOST RUN INSTRUCTIONS
-------------------------------------------------------------------------
-Prerequisites: 
-- Java 21 (or compatible JDK)
-- Node.js & npm
-- MySQL Server (running locally on port 3306)
+## ⚙️ Local Development Setup
 
-[Step 1: Database Setup]
-1. Create a local MySQL database named 'sneaker_store'.
-2. The backend will automatically initialize tables using 'schema.sql'.
+Follow these instructions to run the project on your local machine.
 
-[Step 2: Backend Setup]
-1. Navigate to the backend directory:
-   cd eecs4413_sneaker_store/backend/sneaker_store_backend
+### Prerequisites
+- Java JDK 21 or higher
+- Node.js (v18+) and npm
+- MySQL Server (running on port 3306)
 
-2. Configure environment variables (or update application.properties):
-   (Ensure DB_URL points to jdbc:mysql://localhost:3306/sneaker_store)
-
-3. Run the Spring Boot application:
-   ./gradlew bootRun
-
-[Step 3: Frontend Setup]
-1. Open a new terminal and navigate to the frontend directory:
-   cd eecs4413_sneaker_store/frontend
-
-2. Install dependencies:
-   npm install
-
-3. Start the development server:
-   npm run dev
-
-4. Open your browser at http://localhost:5173
+### 1. Clone the Repository
+```bash
+git clone [https://github.com/dyu55/eecs4413_sneaker_store.git](https://github.com/dyu55/eecs4413_sneaker_store.git)
+cd eecs4413_sneaker_store
