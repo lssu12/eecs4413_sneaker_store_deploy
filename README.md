@@ -1,87 +1,102 @@
-# EECS 4413 – Sneaker Store Web Application
-
-This project is a full-stack web application developed for the EECS 4413 team project. The application simulates an online sneaker store where users can browse products, manage shopping carts, and place orders, while administrators can manage inventory and products.
-
-The system follows a client–server architecture with a React-based frontend, a Spring Boot backend, and a MySQL relational database.
-
-The project emphasizes RESTful API design, database integration, deployment, and team-based software development practices.
-
----
-
-Technology Stack
-
-Frontend:
-- React (Vite)
-- JavaScript (ES6)
-- HTML / CSS
-
-Backend:
-- Java 21
-- Spring Boot
-- Spring Data JPA
-- Hibernate
-- RESTful APIs
-
-Database:
-- MySQL (hosted on Railway)
-
-Deployment:
-- Backend deployed on Render
-- MySQL database hosted on Railway
-
----
-
-System Architecture
-
-The frontend communicates with the backend through REST APIs over HTTP. The backend handles authentication, business logic, and database access using Spring Data JPA. The database stores all persistent data, including users, products, carts, orders, and inventory information.
-
-Environment variables are used to configure database credentials and ports in the production environment.
-
----
-
-Repository Structure
-
-eecs4413_sneaker_store/
-- backend/
-  - sneaker_store_backend/
-    - src/main/java
-    - src/main/resources
-    - Dockerfile
-- frontend/
-  - src/
-  - package.json
-- README.md
-
----
-
-Backend Configuration
-
-In production, the backend reads database and port configuration from environment variables provided by Render. The following variables are required:
-
-- SPRING_DATASOURCE_URL
-- SPRING_DATASOURCE_USERNAME
-- SPRING_DATASOURCE_PASSWORD
-- PORT
-
-Sensitive credentials are not hard-coded in the repository.
-
----
-
-Database Initialization
-
-The database schema is defined using schema.sql, and initial seed data is provided in data.sql. Spring Boot automatically initializes the database when a valid connection to MySQL is available.
-
----
-
-Deployment Notes
-
-The backend is packaged as a Docker image and deployed on Render. The MySQL database is hosted on Railway. During startup, the backend may log database connection warnings if the database is temporarily unavailable; however, once the database becomes reachable, the application operates normally.
-
----
-
-Course Information
-
-Course: EECS 4413  
-Institution: York University  
-Project Type: Team Project
-
+========================================================================
+EECS 4413 Project Submission
+Dongling Yu 219511039
+Yifei Liu 218968735
+Hang Chen 218426106
+Li Sha Su 213581772
+========================================================================
+1. SOURCE CODE REPOSITORY
+------------------------------------------------------------------------
+The complete source code is hosted on GitHub (Public):
+https://github.com/dyu55/eecs4413
+sneaker
+store
+_
+_
+2. INSTRUCTIONS TO DOWNLOAD SOURCE CODE
+------------------------------------------------------------------------
+To download the source code, please open a terminal and run:
+git clone https://github.com/dyu55/eecs4413
+sneaker
+_
+_
+store.git
+3. SQL SCRIPTS LOCATION
+------------------------------------------------------------------------
+The database initialization scripts (schema and data) are located in the
+backend resource directory:
+- Path in Repository:
+/backend/sneaker
+store
+backend/src/main/resources/
+_
+_
+- Files:
+- schema.sql (Table creation)
+- data.sql (Initial data seeding)
+- Direct GitHub Link:
+https://github.com/dyu55/eecs4413
+sneaker
+store/tree/main/backend/sneaker
+store
+_
+_
+_
+_
+src/main/resources
+backend/
+4. ONLINE DEPLOYMENT (CLOUD URL)
+------------------------------------------------------------------------
+The application is deployed on the cloud (Frontend on Vercel, Backend on Render, Database on
+Railway).
+- Access the Application here:
+https://eecs4413-sneaker-store-deploy.vercel.app
+5. ADMIN CREDENTIALS
+------------------------------------------------------------------------
+To access the Admin Dashboard:
+- Username/Email: demo@sneakerstore.test
+- Password: password
+6. LOCALHOST RUN INSTRUCTIONS
+------------------------------------------------------------------------
+Prerequisites:
+- Java 21 (or compatible JDK)
+- Node.js & npm
+- MySQL Server (running locally on port 3306)
+[Step 1: Database Setup]
+1. Create a local MySQL database named 'sneaker
+store'
+.
+_
+2. The backend will automatically initialize tables using 'schema.sql'
+.
+[Step 2: Backend Setup]
+1. Navigate to the backend directory:
+cd eecs4413
+sneaker
+store/backend/sneaker
+store
+_
+_
+_
+_
+backend
+2. Configure environment variables (or update application.properties):
+(Ensure DB
+_
+URL points to jdbc:mysql://localhost:3306/sneaker
+_
+store)
+3. Run the Spring Boot application:
+./gradlew bootRun
+[Step 3: Frontend Setup]
+1. Open a new terminal and navigate to the frontend directory:
+cd eecs4413
+sneaker
+store/frontend
+_
+_
+2. Install dependencies:
+npm install
+3. Start the development server:
+npm run dev
+4. Open your browser at http://localhost:5173
