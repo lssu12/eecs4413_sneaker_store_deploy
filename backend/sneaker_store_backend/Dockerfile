@@ -3,6 +3,8 @@ FROM gradle:8.14.3-jdk21 AS build
 WORKDIR /app
 
 COPY . .
+
+RUN chmod +x gradlew
 RUN ./gradlew clean bootJar -x test
 
 # Run stage
@@ -11,7 +13,8 @@ WORKDIR /app
 
 COPY --from=build /app/build/libs/*.jar app.jar
 
-EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
 
+ENV PORT=10000
+EXPOSE 10000
 
+CMD ["java", "-Dserver.port=${PORT}", "-jar", "app.jar"]
