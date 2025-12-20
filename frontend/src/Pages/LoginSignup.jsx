@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AuthService from '../Service/AuthService';
 import Toast from '../Components/Toast';
+import { useCart } from '../Context/CartContext';
 
 const LoginSignup = () => {
 	const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ const LoginSignup = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [toast, setToast] = useState(null);
+	const { syncGuestCartToServer, refreshProducts } = useCart();
 
 	const showToast = (message, type = 'info') => {
 		setToast({ message, type });
@@ -26,6 +28,12 @@ const LoginSignup = () => {
 			}
 
 			showToast('Successfully logged in', 'success');
+			try {
+				await syncGuestCartToServer();
+				await refreshProducts();
+			} catch (syncErr) {
+				console.warn('Failed to sync guest cart after login', syncErr);
+			}
 			const redirectTo = location.state?.from || '/sneakers';
 			const destination = role === 'ADMIN' ? '/admin' : redirectTo;
 			navigate(destination);

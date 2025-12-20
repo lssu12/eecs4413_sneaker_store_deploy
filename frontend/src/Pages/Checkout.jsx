@@ -261,8 +261,8 @@ const Checkout = () => {
 		const cardHolderName = `${billing.firstName || user?.firstName || ''} ${billing.lastName || user?.lastName || ''}`.trim();
 		const checkoutData = {
 			customerId,
-			items: cartProductList.map((item) => ({
-				productId: item.id,
+				items: cartProductList.map((item) => ({
+					productId: item.productId ?? Number(item.id),
 				quantity: item.quantity,
 				size: item.size || null,
 			})),
@@ -329,7 +329,8 @@ const Checkout = () => {
 			}
 			navigate('/order-success', { state: { order: orderDetails } });
 		} catch (err) {
-			showError('Failed to place order. Please try again.');
+			const backendMessage = err?.response?.data?.message;
+			showError(backendMessage || 'Failed to place order. Please try again.');
 			recordPaymentFailure();
 		}
 	};

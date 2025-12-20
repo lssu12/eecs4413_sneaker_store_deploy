@@ -28,17 +28,20 @@ const ProductDisplayPage = () => {
     setToast({ message, type });
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product) return;
     if (!selectedSize) {
       triggerToast('Please select a size', 'error');
       return;
     }
 
-    const cartKey = `${product.id}-${selectedSize}`;
-    console.log('[ProductDisplay] Adding to cart:', cartKey);
-    addToCart(cartKey);
-    triggerToast('Added to cart!', 'success');
+    try {
+      await addToCart(product, selectedSize, 1);
+      triggerToast('Added to cart!', 'success');
+    } catch (err) {
+      console.error('Failed to add item to cart', err);
+      triggerToast('Unable to add to cart. Please try again.', 'error');
+    }
   };
 
   if (!product) return <div className="text-center mt-10">Loading product...</div>;

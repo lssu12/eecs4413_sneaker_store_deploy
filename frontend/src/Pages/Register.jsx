@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AuthService from '../Service/AuthService';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useCart } from '../Context/CartContext';
 
 const Register = () => {
 	const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const Register = () => {
 	const location = useLocation();
 	const [errorMessage, setErrorMessage] = useState('');
 	const [successMessage, setSuccessMessage] = useState('');
+	const { syncGuestCartToServer, refreshProducts } = useCart();
 
 	const showError = (message) => {
 		setErrorMessage(message);
@@ -68,11 +70,17 @@ const Register = () => {
 				if (redirectTo) {
 					showSuccess('Registration successful! Logging you in...');
 					try {
-						const loginResponse = await AuthService.loginUser({ email: formData.email, password: formData.password });
-						if (loginResponse.token && loginResponse.customerId) {
-							navigate(redirectTo, { replace: true });
-							return;
-						}
+							const loginResponse = await AuthService.loginUser({ email: formData.email, password: formData.password });
+							if (loginResponse.token && loginResponse.customerId) {
+								try {
+									await syncGuestCartToServer();
+									await refreshProducts();
+								} catch (syncErr) {
+									console.warn('Failed to sync guest cart after registration login', syncErr);
+								}
+								navigate(redirectTo, { replace: true });
+								return;
+							}
 					} catch (loginErr) {
 						console.error('Auto login failed after registration', loginErr);
 						showError('Registered, but auto login failed. Please log in manually.');
