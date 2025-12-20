@@ -86,9 +86,9 @@ Environment variables (optional locally, required for deployment):
 | `SPRING_DATASOURCE_USERNAME` | DB user | `sneaker_app` |
 | `SPRING_DATASOURCE_PASSWORD` | DB password | `sneaker_pass` |
 | `SPRING_SQL_INIT_MODE` | `always` to recreate schema, `never` once seeded | `never` |
-| `APP_ALLOWED_ORIGINS` | Comma-separated frontend origins for CORS | `http://localhost:5173` |
+| `APP_ALLOWED_ORIGINS` | Comma-separated frontend origins for CORS | `http://localhost:5173,https://eecs4413-sneaker-store-deploy.vercel.app` |
 
-Update `src/main/resources/application.properties` to match your PostgreSQL credentials.
+Copy `backend/sneaker_store_backend/.env.example` to `.env` (or add the same keys to Render) and update `src/main/resources/application.properties` only if you need different local defaults.
 
 ## Deploying on Render
 
@@ -100,7 +100,7 @@ Update `src/main/resources/application.properties` to match your PostgreSQL cred
    - `SPRING_DATASOURCE_URL` = converted JDBC URL (or keep Render's `DATABASE_URL` and reference it in `application.properties`).
    - `SPRING_DATASOURCE_USERNAME` / `SPRING_DATASOURCE_PASSWORD` = credentials Render shows beside the database.
    - `SPRING_SQL_INIT_MODE=always` for the first deploy so Spring runs `schema.sql` and `data.sql`, then switch it back to `never` to avoid wiping data on subsequent releases.
-   - `APP_ALLOWED_ORIGINS=https://<your-vercel-app>.vercel.app,https://<any-other-frontend>`
+   - `APP_ALLOWED_ORIGINS=https://eecs4413-sneaker-store-deploy.vercel.app` (add other origins comma-separated as needed)
 4. **Manual seeding option** – Alternatively run
    ```bash
    psql "$DATABASE_URL" -f src/main/resources/schema.sql
@@ -113,6 +113,12 @@ Local connection reference:
 
 - JDBC URL: `jdbc:postgresql://localhost:5433/sneaker_store`
 - Username / password: `sneaker_app / sneaker_pass`
+
+## Deploying the Frontend (Vercel)
+
+1. In the Vercel project settings add `VITE_BASE_URL=https://eecs4413-sneaker-store.onrender.com` under Environment Variables (apply to Production & Preview). Redeploy so the React app points at the hosted API.
+2. If you spin up additional frontend previews, append those URLs to `APP_ALLOWED_ORIGINS` on Render so CORS succeeds (`originA,originB`).
+3. To test locally, create `frontend/.env.local` with the same `VITE_BASE_URL` but pointing to your local backend (e.g., `http://localhost:8080`).
 
 ## Key APIs
 
